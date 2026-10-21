@@ -6,8 +6,8 @@
     <meta name="description" content="Monitor sales orders across branches with Branchline.">
     <title>Sales orders · SOM</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23225848'/%3E%3Cpath d='M10 28V18h5v10m3 0V12h5v16m3 0V8h5v20' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
-    <link rel="stylesheet" href="{{ asset('app.css') }}">
-    <script src="{{ asset('app.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ asset('app.css') }}?v={{ filemtime(public_path('app.css')) }}">
+    <script src="{{ asset('app.js') }}?v={{ filemtime(public_path('app.js')) }}" defer></script>
 </head>
 <body>
 <aside class="sidebar">
@@ -20,7 +20,7 @@
 <div class="app-shell">
     <header class="topbar"><div class="breadcrumb">Workspace <span>/</span> <strong>Sales overview</strong></div></header>
     <main>
-        <div class="page-heading"><div><h1>Sales overview</h1><p>Technical Assesment ( Sales Order Monitoring System).</p></div><button class="button refresh" id="refresh" type="button"><span aria-hidden="true">↻</span> Refresh data</button></div>
+        <div class="page-heading"><div><h1>Sales overview</h1><p>Technical Assesment ( Sales Order Monitoring System).</p></div><button class="button refresh" id="refresh" type="button" aria-label="Refresh data" title="Refresh data"><span aria-hidden="true">↻</span> Refresh data</button></div>
         <div class="overview-label"><h2>Order snapshot</h2><span><span class="fixture-dot"></span> All branches · All orders</span></div>
         <section class="metrics" aria-label="All-order dashboard totals" aria-busy="true" id="metrics">
             <article class="metric"><div class="metric-label">Total orders <span aria-hidden="true">▦</span></div><strong data-metric="total_orders">—</strong><span class="metric-note">Across all branches</span></article>
@@ -35,6 +35,13 @@
                 <label class="search-field"><span aria-hidden="true">⌕</span><input id="search" name="q" type="search" maxlength="150" placeholder="Search order, customer or reference…" aria-label="Search orders"></label>
                 <label class="select-field"><span>Branch</span><select id="site" name="site" aria-label="Filter by branch"><option value="">All branches</option></select></label>
                 <label class="select-field"><span>Status</span><select id="status" name="status" aria-label="Filter by status"><option value="">All statuses</option></select></label>
+                <label class="select-field mobile-sort"><span>Sort</span><select id="mobile-sort" aria-label="Sort orders">
+                    <option value="CreatedDateTime1:desc">Newest first</option><option value="CreatedDateTime1:asc">Oldest first</option>
+                    <option value="HAR_TotalSOAmount:desc">Highest amount</option><option value="HAR_TotalSOAmount:asc">Lowest amount</option>
+                    <option value="SalesId:asc">Order number: A–Z</option><option value="SalesId:desc">Order number: Z–A</option>
+                    <option value="InventSiteId:asc">Branch: A–Z</option><option value="InventSiteId:desc">Branch: Z–A</option>
+                    <option value="SalesStatus:asc">Status: A–Z</option><option value="SalesStatus:desc">Status: Z–A</option>
+                </select></label>
                 <button type="button" id="clear" class="clear-button" hidden>Clear filters</button>
             </form>
             <div id="meta-error" class="meta-error" hidden>Filter options could not load. <button id="retry-meta" type="button">Retry filters</button></div>

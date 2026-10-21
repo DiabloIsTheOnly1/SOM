@@ -12,6 +12,9 @@
         sort: allowedSorts.includes(params.get('sort')) ? params.get('sort') : 'CreatedDateTime1',
         order: params.get('order') === 'asc' ? 'asc' : 'desc',
     };
+    // Accept existing bookmarked filters once, then keep the address bar clean.
+    // Further filter changes live in this page; refreshing starts from defaults.
+    if (location.search) history.replaceState(null, '', location.pathname + location.hash);
     const number = new Intl.NumberFormat('en-MY');
     const money = new Intl.NumberFormat('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const date = new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kuala_Lumpur' });
@@ -19,11 +22,9 @@
     $('search').value = state.q;
     $('page-size').value = state.pageSize;
 
-    function syncUrl() {
-        const query = new URLSearchParams();
-        for (const [key, value] of Object.entries(state)) if (value !== '') query.set(key, value);
-        history.replaceState(null, '', `${location.pathname}?${query}`);
+    function syncControls() {
         $('clear').hidden = !(state.q || state.site || state.status);
+        $('mobile-sort').value = `${state.sort}:${state.order}`;
         document.querySelectorAll('.sort').forEach((button) => {
             const active = button.dataset.sort === state.sort;
             if (active) button.closest('th').setAttribute('aria-sort', state.order === 'asc' ? 'ascending' : 'descending');
@@ -64,29 +65,31 @@
         panel.hidden = false;
     }
 
-    function cell(row, text, className = '') {
-        const td = document.createElement('td'); td.textContent = text; td.className = className; row.append(td); return td;
+    function cell(row, text, className = '', label = '') {
+        const td = document.createElement('td');
+        td.textContent = text; td.className = className; td.dataset.label = label;
+        row.append(td); return td;
     }
 
     function renderOrders(orders) {
         const fragment = document.createDocumentFragment();
         for (const order of orders) {
             const row = document.createElement('tr');
-            cell(row, order.SalesId, 'order-id');
-            const customer = cell(row, '');
+            cell(row, order.SalesId, 'order-id', 'Order number');
+            const customer = cell(row, '', 'customer-cell', 'Customer');
             const name = document.createElement('span'); name.className = 'customer-name'; name.textContent = order.SalesName || '—';
             const account = document.createElement('span'); account.className = 'customer-account'; account.textContent = order.CustAccount || '—';
             customer.append(name, account);
-            const site = cell(row, '');
+            const site = cell(row, '', 'branch-cell', 'Branch');
             const code = document.createElement('span'); code.className = 'site-code'; code.textContent = order.InventSiteId || '—'; site.append(code);
             const created = new Date(order.CreatedDateTime1);
-            cell(row, Number.isNaN(created.getTime()) ? '—' : date.format(created));
-            const status = cell(row, '');
+            cell(row, Number.isNaN(created.getTime()) ? '—' : date.format(created), 'date-cell', 'Order date');
+            const status = cell(row, '', 'status-cell', 'Status');
             const badge = document.createElement('span');
             const types = { 'Open order': 'open', Invoiced: 'invoiced', Delivered: 'delivered', Cancelled: 'cancelled' };
             badge.className = `status-pill status-${types[order.SalesStatus] || 'other'}`;
             badge.textContent = order.SalesStatus || 'Unknown'; status.append(badge);
-            cell(row, money.format(order.HAR_TotalSOAmount), 'amount amount-value');
+            cell(row, money.format(order.HAR_TotalSOAmount), 'amount amount-value', 'Amount (MYR)');
             fragment.append(row);
         }
         $('order-rows').replaceChildren(fragment);
@@ -96,7 +99,7 @@
         clearTimeout(debounce);
         requestController?.abort();
         const controller = new AbortController(); requestController = controller;
-        busy = true; controls(); syncUrl();
+        busy = true; controls(); syncControls();
         $('results').setAttribute('aria-busy', 'true');
         $('metrics').setAttribute('aria-busy', 'true');
         $('order-rows').replaceChildren();
@@ -177,6 +180,10 @@
     $('filters').addEventListener('submit', (event) => { event.preventDefault(); loadOrders(); });
     for (const id of ['site', 'status']) $(id).addEventListener('change', () => { state[id] = $(id).value; state.page = 1; loadOrders(); });
     $('page-size').addEventListener('change', () => { state.pageSize = Number($('page-size').value); state.page = 1; loadOrders(); });
+    $('mobile-sort').addEventListener('change', () => {
+        [state.sort, state.order] = $('mobile-sort').value.split(':');
+        state.page = 1; loadOrders();
+    });
     $('clear').addEventListener('click', clearFilters);
     $('previous').addEventListener('click', () => { if (state.page > 1) { state.page--; loadOrders(); } });
     $('next').addEventListener('click', () => { if (state.page < totalPages) { state.page++; loadOrders(); } });

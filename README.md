@@ -51,6 +51,10 @@ One controller validates and forwards browser requests to the fixed assessment R
 
 Search, branch/status filters, pagination, and sorting run upstream. Metadata supplies filter options. The API summary remains global when filters are applied; the listing count reflects the selected filters. Completed orders combine invoiced and delivered counts. The UI displays amounts in MYR and order dates in Asia/Kuala_Lumpur. Search is debounced and earlier requests are cancelled. Loading, empty, and recoverable error states are included.
 
+The address bar stays at `/` while filtering, sorting, or changing pages. Legacy URLs containing query parameters are read once and then cleaned with `history.replaceState`. Filter state stays in the current page; refreshing the clean URL resets it. Desktop uses a sortable table, while screens up to 700px use labelled order cards with a dedicated sort control and larger touch targets. Asset URLs include a file version so deployments refresh changed CSS and JavaScript.
+
+For updates on Render, push changes to the linked repository branch. With a connected Git provider and Auto-Deploy set to **On Commit**, Render rebuilds and deploys each push. If Auto-Deploy is off or the service uses a public repository URL without a connected provider, choose **Manual Deploy → Deploy latest commit**. Local edits alone do not update the hosted application.
+
 ## Testing and AI disclosure
 
 ```powershell
@@ -58,5 +62,7 @@ composer test
 ```
 
 Eight automated tests cover rendering, authenticated GET forwarding, query validation, metadata, upstream errors, malformed responses, and blocked writes. Optional JavaScript syntax check: `node --check public/app.js`.
+
+With Node installed, run `node --test tests/client.test.cjs` for six dependency-free client tests covering clean URLs, legacy filters, pagination, mobile/desktop sorting, labelled mobile card fields, filter clearing, error retry, and empty results. These DOM-double unit tests do not replace visual checks in real desktop/mobile browsers.
 
 OpenAI Codex assisted with implementation, documentation, API inspection, and tests. Earlier local verification passed 8 tests with 28 assertions and live HTTP checks for searching, filtering, sorting, pagination, and empty results. Public deployment and visual browser testing must be verified after deployment. The Docker image has not been built locally because a working Docker runtime was unavailable.
