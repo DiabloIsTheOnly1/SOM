@@ -4,14 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Monitor sales orders across branches with Branchline.">
-    <title>Sales orders · Branchline</title>
+    <title>Sales orders · SOM</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23225848'/%3E%3Cpath d='M10 28V18h5v10m3 0V12h5v16m3 0V8h5v20' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
     <link rel="stylesheet" href="{{ asset('app.css') }}">
     <script src="{{ asset('app.js') }}" defer></script>
 </head>
 <body>
 <aside class="sidebar">
-    <a class="brand" href="/" aria-label="Branchline home"><span class="brand-icon">▥</span> branchline<span class="brand-dot">.</span></a>
+    <a class="brand" href="/" aria-label="sOM home"><span class="brand-icon">▥</span> SOM<span class="brand-dot">.</span></a>
     <div class="workspace"><span class="workspace-icon">H</span><div>Harrisons<span>Sales workspace</span></div><span class="workspace-arrow">⌄</span></div>
     <p class="nav-caption">WORKSPACE</p>
     <a class="nav-item active" href="/" aria-current="page"><span aria-hidden="true">▦</span> Sales overview <span class="nav-mark"></span></a>
@@ -20,7 +20,7 @@
 <div class="app-shell">
     <header class="topbar"><div class="breadcrumb">Workspace <span>/</span> <strong>Sales overview</strong></div></header>
     <main>
-        <div class="page-heading"><div><div class="eyebrow">YOUR BUSINESS, AT A GLANCE</div><h1>Sales overview</h1><p>A clear view of every order, across every branch.</p></div><button class="button refresh" id="refresh" type="button"><span aria-hidden="true">↻</span> Refresh data</button></div>
+        <div class="page-heading"><div><h1>Sales overview</h1><p>Technical Assesment ( Sales Order Monitoring System).</p></div><button class="button refresh" id="refresh" type="button"><span aria-hidden="true">↻</span> Refresh data</button></div>
         <div class="overview-label"><h2>Order snapshot</h2><span><span class="fixture-dot"></span> All branches · All orders</span></div>
         <section class="metrics" aria-label="All-order dashboard totals" aria-busy="true" id="metrics">
             <article class="metric"><div class="metric-label">Total orders <span aria-hidden="true">▦</span></div><strong data-metric="total_orders">—</strong><span class="metric-note">Across all branches</span></article>
